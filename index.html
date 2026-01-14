@@ -1,0 +1,43 @@
+<div id="isolated_regex_container" class="extension_container">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>Isolated Regex (隔离正则)</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+            <div class="isolated-settings">
+                <div class="isolated-row">
+                    <label class="checkbox_label">
+                        <input type="checkbox" id="isolated_enabled" />
+                        Enable for this Character / 启用
+                    </label>
+                </div>
+                <hr>
+                <div class="isolated-row">
+                    <label>Regex Pattern / 正则式:</label>
+                    <input type="text" id="isolated_regex" class="text_pole" placeholder="/pattern/ (no slashes)" />
+                </div>
+                <div class="isolated-row">
+                    <label>Flags / 标记:</label>
+                    <input type="text" id="isolated_flags" class="text_pole" placeholder="gmi" />
+                </div>
+                <div class="isolated-row">
+                    <label>Replacement / 替换文本:</label>
+                    <textarea id="isolated_replacement" class="text_pole" rows="3"></textarea>
+                </div>
+                <hr>
+                <div class="isolated-row" style="justify-content: flex-end;">
+                    <div id="isolated_export" class="menu_button">
+                        <i class="fa-solid fa-file-export"></i> Export
+                    </div>
+                    <div id="isolated_import" class="menu_button">
+                        <i class="fa-solid fa-file-import"></i> Import
+                    </div>
+                </div>
+                <div class="isolated-row">
+                    <small>This regex runs after all other scripts. / 此正则在所有其他脚本之后运行。</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
