@@ -1,47 +1,71 @@
 #isolated-regex-section {
-margin-top: 15px;
-border-top: 1px solid var(--smart-border-color);
-padding-top: 10px;
+    margin-top: 15px;
+    border-top: 1px solid var(--smart-border-color);
+    padding-top: 10px;
 }
 
 .isolated-regex-title {
-font-weight: 700;
-margin-bottom: 5px;
-color: var(--smart-theme-color);
-display: flex;
-justify-content: space-between;
-align-items: center;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--smart-theme-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1em;
 }
 
 /* 模仿原生脚本卡的样式 */
 .isolated-script-card {
-background-color: var(--smart-background-color);
-border: 1px solid var(--smart-border-color);
-border-radius: 5px;
-padding: 10px;
-margin-bottom: 5px;
-display: flex;
-flex-direction: column;
-gap: 5px;
+    background-color: var(--smart-background-color);
+    border: 1px solid var(--smart-border-color);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .isolated-row {
-display: flex;
-gap: 10px;
-align-items: center;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .isolated-row label {
-min-width: 60px;
-font-size: 0.9em;
-opacity: 0.8;
+    min-width: 60px;
+    font-size: 0.9em;
+    opacity: 0.8;
+    white-space: nowrap;
 }
 
 .isolated-row .text_pole {
-flex-grow: 1;
-width: 100%;
+    flex-grow: 1;
+    width: 100%;
+    /* SillyTavern input styles usually inherit, but good to be safe */
+    background-color: var(--smart-input-bg);
+    color: var(--smart-text-color);
+    border: 1px solid var(--smart-border-color);
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.isolated-row small {
+    font-size: 0.8em;
+    color: var(--smart-text-muted-color);
 }
 
 .isolated-toolbar-btn {
-margin-left: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.isolated-toolbar-sep {
+    margin: 0 5px;
+    color: var(--smart-text-muted-color);
+    opacity: 0.5;
 }
