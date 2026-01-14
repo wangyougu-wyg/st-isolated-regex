@@ -1,39 +1,47 @@
-.isolated-regex-settings {
-padding: 10px;
-background-color: rgba(0, 0, 0, 0.2);
+#isolated-regex-section {
+margin-top: 15px;
+border-top: 1px solid var(--smart-border-color);
+padding-top: 10px;
+}
+
+.isolated-regex-title {
+font-weight: 700;
+margin-bottom: 5px;
+color: var(--smart-theme-color);
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+/* 模仿原生脚本卡的样式 */
+.isolated-script-card {
+background-color: var(--smart-background-color);
 border: 1px solid var(--smart-border-color);
 border-radius: 5px;
-margin-bottom: 10px;
-}
-
-.isolated-regex-header {
-font-weight: bold;
-margin-bottom: 10px;
-color: var(--smart-theme-color);
-}
-
-.isolated-regex-row {
+padding: 10px;
+margin-bottom: 5px;
 display: flex;
 flex-direction: column;
-margin-bottom: 8px;
+gap: 5px;
 }
 
-.isolated-regex-row label {
-margin-bottom: 4px;
-font-size: 0.9em;
-}
-
-.isolated-regex-actions {
+.isolated-row {
 display: flex;
 gap: 10px;
-margin-top: 10px;
+align-items: center;
 }
 
-.isolated-btn {
-padding: 5px 10px;
-cursor: pointer;
-background: var(--smart-theme-color);
-color: var(--smart-theme-body-color);
-border: none;
-border-radius: 4px;
+.isolated-row label {
+min-width: 60px;
+font-size: 0.9em;
+opacity: 0.8;
+}
+
+.isolated-row .text_pole {
+flex-grow: 1;
+width: 100%;
+}
+
+.isolated-toolbar-btn {
+margin-left: 5px;
 }
