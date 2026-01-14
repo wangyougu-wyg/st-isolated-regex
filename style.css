@@ -1,0 +1,39 @@
+.isolated-regex-settings {
+padding: 10px;
+background-color: rgba(0, 0, 0, 0.2);
+border: 1px solid var(--smart-border-color);
+border-radius: 5px;
+margin-bottom: 10px;
+}
+
+.isolated-regex-header {
+font-weight: bold;
+margin-bottom: 10px;
+color: var(--smart-theme-color);
+}
+
+.isolated-regex-row {
+display: flex;
+flex-direction: column;
+margin-bottom: 8px;
+}
+
+.isolated-regex-row label {
+margin-bottom: 4px;
+font-size: 0.9em;
+}
+
+.isolated-regex-actions {
+display: flex;
+gap: 10px;
+margin-top: 10px;
+}
+
+.isolated-btn {
+padding: 5px 10px;
+cursor: pointer;
+background: var(--smart-theme-color);
+color: var(--smart-theme-body-color);
+border: none;
+border-radius: 4px;
+}

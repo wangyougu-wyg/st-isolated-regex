@@ -1,0 +1,10 @@
+{
+"display_name": "Isolated Regex (隔离正则)",
+"name": "st-isolated-regex",
+"version": "1.0.0",
+"author": "Antigravity",
+"description": "为每个角色添加一个独立的隔离正则。该正则在所有其他正则之后运行，其替换内容不会被其他正则匹配。",
+"loading_order": 9999,
+"js": "index.js",
+"css": "style.css"
+}
