@@ -1,27 +1,28 @@
-import {
-saveSettingsDebounced,
-extension_settings,
-getContext,
-eventSource,
-event_types,
-} from "../../../script.js";
-
-// 拓展名称，用于存储设置
 const EXTENSION_NAME = "st-isolated-regex";
 const SETTINGS_KEY = "isolated_regex_data";
 
-// 初始化默认设置结构
-if (!extension_settings[EXTENSION_NAME]) {
-extension_settings[EXTENSION_NAME] = {};
+// 辅助函数：获取全局变量，避免未定义错误
+function getGlobal(key) {
+return window[key];
 }
-if (!extension_settings[EXTENSION_NAME][SETTINGS_KEY]) {
-extension_settings[EXTENSION_NAME][SETTINGS_KEY] = {};
+
+// 初始化设置结构
+function initSettings() {
+const settings = getGlobal('extension_settings');
+if (!settings) return; // 尚未加载完成
+
+if (!settings[EXTENSION_NAME]) {
+settings[EXTENSION_NAME] = {};
+}
+if (!settings[EXTENSION_NAME][SETTINGS_KEY]) {
+settings[EXTENSION_NAME][SETTINGS_KEY] = {};
+}
 }
 
 // 获取当前角色ID
 function getCurrentCharacterId() {
-const context = getContext();
-return context.characterId;
+const context = getGlobal('getContext') ? getGlobal('getContext')() : null;
+return context ? context.characterId : null;
 }
 
 // 获取当前角色的隔离正则配置
@@ -29,12 +30,13 @@ function getCharRegexData() {
 const charId = getCurrentCharacterId();
 if (charId === undefined || charId === null) return null;
 
-// 使用角色文件名作为Key，确保即使移动位置也能找到（只要文件名不变）
-// 或者使用 avatar 路径，这里简单使用 characterId 对应的文件名
-const char = getContext().characters[charId];
+const context = getGlobal('getContext')();
+const char = context.characters[charId];
 if (!char) return null;
 
-const data = extension_settings[EXTENSION_NAME][SETTINGS_KEY];
+const settings = getGlobal('extension_settings');
+const data = settings[EXTENSION_NAME][SETTINGS_KEY];
+
 // 初始化该角色的数据
 if (!data[char.avatar]) {
 data[char.avatar] = {
@@ -51,11 +53,16 @@ return data[char.avatar];
 function saveCharRegexData(newData) {
 const charId = getCurrentCharacterId();
 if (charId === undefined || charId === null) return;
-const char = getContext().characters[charId];
+const context = getGlobal('getContext')();
+const char = context.characters[charId];
 if (!char) return;
 
-extension_settings[EXTENSION_NAME][SETTINGS_KEY][char.avatar] = newData;
-saveSettingsDebounced();
+const settings = getGlobal('extension_settings');
+settings[EXTENSION_NAME][SETTINGS_KEY][char.avatar] = newData;
+
+// 调用全局保存函数
+const saveFunc = getGlobal('saveSettingsDebounced');
+if (saveFunc) saveFunc();
 }
 
 // --- UI 构建 ---
@@ -72,7 +79,7 @@ container.appendChild(header);
 const data = getCharRegexData();
 
 if (!data) {
-container.innerHTML += "<div>请先选择一个角色。</div>";
+container.innerHTML += "<div>请先进入对话并选择一个角色。</div>";
 return container;
 }
 
@@ -107,7 +114,7 @@ saveCharRegexData(data);
 regexRow.appendChild(regexInput);
 container.appendChild(regexRow);
 
-
+// 替换内容输入
 const replaceRow = document.createElement("div");
 replaceRow.className = "isolated-regex-row";
 replaceRow.innerHTML = `<label>替换内容 (Replacement):</label>`;
@@ -123,7 +130,7 @@ saveCharRegexData(data);
 replaceRow.appendChild(replaceInput);
 container.appendChild(replaceRow);
 
-
+// Flags 输入
 const flagsRow = document.createElement("div");
 flagsRow.className = "isolated-regex-row";
 flagsRow.innerHTML = `<label>标记 (Flags):</label>`;
@@ -147,11 +154,13 @@ const exportBtn = document.createElement("button");
 exportBtn.className = "isolated-btn";
 exportBtn.textContent = "导出 JSON";
 exportBtn.onclick = () => {
+const context = getGlobal('getContext')();
+const charName = context.characters[getCurrentCharacterId()].name;
 const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
 const url = URL.createObjectURL(blob);
 const a = document.createElement("a");
 a.href = url;
-a.download = `isolated_regex_${getContext().characters[getCurrentCharacterId()].name}.json`;
+a.download = `isolated_regex_${charName}.json`;
 a.click();
 };
 
@@ -170,10 +179,10 @@ reader.onload = (re) => {
 try {
 const json = JSON.parse(re.target.result);
 if (json.regex !== undefined) {
-
+// 更新数据
 Object.assign(data, json);
 saveCharRegexData(data);
-
+// 刷新界面
 regexInput.value = data.regex;
 replaceInput.value = data.replacement;
 flagsInput.value = data.flags;
@@ -199,10 +208,10 @@ return container;
 
 // 将设置界面注入到拓展面板
 function addExtensionSettings() {
-const settingsContainer = $("#extensions_settings"); // jQuery selector used in ST
+const settingsContainer = $("#extensions_settings");
 if (settingsContainer.length === 0) return;
 
-
+// 清除旧的显示
 $("#isolated-regex-container").remove();
 
 const ui = buildUISettings();
@@ -210,7 +219,7 @@ ui.id = "isolated-regex-container";
 settingsContainer.append(ui);
 }
 
-
+// --- 核心逻辑：执行正则替换 ---
 
 function executeIsolatedRegex(text) {
 const data = getCharRegexData();
@@ -220,9 +229,8 @@ return text;
 
 try {
 const re = new RegExp(data.regex, data.flags);
-
 const newText = text.replace(re, data.replacement);
-console.log(`[Isolated Regex] Applied. Length changed: ${text.length} -> ${newText.length}`);
+// console.log(`[Isolated Regex] Applied. Length changed: ${text.length} -> ${newText.length}`);
 return newText;
 } catch (e) {
 console.error("[Isolated Regex] Error executing regex:", e);
@@ -230,35 +238,34 @@ return text;
 }
 }
 
-
+// 注册加载函数 (使用 jQuery ready)
 jQuery(async () => {
+// 确保设置已初始化
+initSettings();
 
+// 1. 添加设置界面监听
 $(document).on('click', '#extensions_button', addExtensionSettings);
 
+// 监听角色切换
+const eventSource = getGlobal('eventSource');
+const event_types = getGlobal('event_types');
 
+if (eventSource && event_types) {
 eventSource.on(event_types.CHARACTER_SELECTED, () => {
 if ($("#isolated-regex-container").is(":visible")) {
 addExtensionSettings();
 }
 });
+}
 
-
-
+// 2. 核心：Hook 消息处理 (Extension API)
 if (window.SillyTavern && window.SillyTavern.extension_api) {
-
+// 处理 AI 回复 (Output)
 window.SillyTavern.extension_api.addMessageProcessor('output', (text) => {
 return executeIsolatedRegex(text);
 });
-
-
-window.SillyTavern.extension_api.addMessageProcessor('input', (text) => {
- return executeIsolatedRegex(text);
- });
+console.log("[Isolated Regex] Extension Loaded via API.");
 } else {
-
-console.warn("[Isolated Regex] Extension API not found, falling back strictly depends on ST version.");
-
+console.warn("[Isolated Regex] Extension API not found. Please update SillyTavern.");
 }
-
-console.log("[Isolated Regex] Extension Loaded.");
 });
